@@ -6,6 +6,7 @@ Button btnUp = Button(PIN_BTN_UP, PULLUP);
 Button btnDown = Button(PIN_BTN_DOWN, PULLUP);
 Button btnStart = Button(PIN_BTN_START, PULLUP);
 Button btnFocus = Button(PIN_BTN_FOCUS, PULLUP);
+Button btnMode = Button(PIN_BTN_MODE, PULLUP);
 
 
 BtnId getInput() {
@@ -15,6 +16,7 @@ BtnId getInput() {
     else if (btnDown.uniquePress()) return BtnId::Down;
     else if (btnStart.uniquePress()) return BtnId::StartStop;
     else if (btnFocus.uniquePress()) return BtnId::Focus;
+    else if (btnMode.uniquePress()) return BtnId::Mode;
     else return BtnId::None;
 }
 
@@ -27,6 +29,7 @@ String getInputName(BtnId id)
     case BtnId::Down: return "btn_down";
     case BtnId::StartStop: return "btn_start";
     case BtnId::Focus: return "btn_focus";
+    case BtnId::Mode: return "btn_mode";
     case BtnId::None: return "none";
     }
 }

@@ -2,13 +2,14 @@
 
 #include <Button.h>
 
-#define PIN_LED			12
-#define PIN_BTN_LEFT	6
-#define PIN_BTN_RIGHT	3
-#define PIN_BTN_UP		4
-#define PIN_BTN_DOWN	5
-#define PIN_BTN_START	2
-#define PIN_BTN_FOCUS   A0
+#define PIN_LED			8
+#define PIN_BTN_LEFT	11
+#define PIN_BTN_RIGHT	12
+#define PIN_BTN_UP		9
+#define PIN_BTN_DOWN	10
+#define PIN_BTN_START	A0
+#define PIN_BTN_FOCUS   A1
+#define PIN_BTN_MODE    A2
 #define NONE		    255
 
 enum class BtnId : uint8_t {
@@ -18,14 +19,17 @@ enum class BtnId : uint8_t {
     Down = PIN_BTN_DOWN,
     StartStop = PIN_BTN_START,
     Focus = PIN_BTN_FOCUS,
+    Mode = PIN_BTN_MODE,
     None = 255,
 };
 
-extern Button btnChange;
+extern Button Left;
+extern Button Right;
 extern Button btnUp;
 extern Button btnDown;
 extern Button btnStart;
 extern Button btnFocus;
+extern Button btnMode;
 
 
 BtnId getInput();

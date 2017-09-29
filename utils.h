@@ -12,3 +12,5 @@ typedef uint8_t digit;
 uint16_t getMult(digit d);
 String getDigitName(digit d);
 uint8_t getDigit(uint32_t t, digit d);
+
+String t2s(uint32_t t);

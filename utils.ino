@@ -27,3 +27,6 @@ uint8_t getDigit(uint32_t t, digit d) {
     return res;
 }
 
+String t2s(uint32_t t) {
+    return String(t / 10) + "." + t % 10 + "s";
+}

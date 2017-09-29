@@ -10,3 +10,6 @@
 
 #define TIMER_START 40536
 
+#define MAX_TIMER_TIME 9999
+#define MIN_TIMER_TIME 0
+
