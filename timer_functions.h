@@ -8,8 +8,6 @@ public:
     virtual void enter() override;
     virtual void loop() override;
     virtual void exit() override;
-
-
 };
 
 

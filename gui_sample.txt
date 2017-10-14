@@ -31,5 +31,17 @@ Focusing
 TestStrip
 ----------------+
 Test Strip Mode:
-press "Start"...
+<-Mode | Start->
+----------------+
+
+TestStrip select time and step
+----------------+
+Time   ||   Step
+000.0s || xxxxxx
+----------------+
+
+TestStrip ready
+----------------+
+Strip: # 2
+000.0s / 111.1s
 ----------------+
