@@ -1,16 +1,7 @@
 #pragma once
 
 #include <Button.h>
-
-#define PIN_LED			8
-#define PIN_BTN_LEFT	11
-#define PIN_BTN_RIGHT	12
-#define PIN_BTN_UP		9
-#define PIN_BTN_DOWN	10
-#define PIN_BTN_START	A0
-#define PIN_BTN_FOCUS   A1
-#define PIN_BTN_MODE    A2
-#define NONE		    255
+#include "defs.h"
 
 enum class BtnId : uint8_t {
     Left = PIN_BTN_LEFT,

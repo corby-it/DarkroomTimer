@@ -1,17 +1,32 @@
 #pragma once
 
-void stTestStripEnter();
-void stTestStripLoop();
-void stTestStripExit();
+class TestStripState : public State {
+public:
+    virtual void enter() override;
+    virtual void loop() override;
+    virtual void exit() override;
+};
 
-void stTestStripSelectTimeStopEnter();
-void stTestStripSelectTimeStopLoop();
-void stTestStripSelectTimeStopExit();
 
-void stTestStripReadyEnter();
-void stTestStripReadyLoop();
-void stTestStripReadyExit();
+class TestStripSelectTimeState : public State {
+public:
+    virtual void enter() override;
+    virtual void loop() override;
+    virtual void exit() override;
+};
 
-void stTestStripRunningEnter();
-void stTestStripRunningLoop();
-void stTestStripRunningExit();
+
+class TestStripReadyState : public State {
+public:
+    virtual void enter() override;
+    virtual void loop() override;
+    virtual void exit() override;
+};
+
+
+class TestStripRunningState : public State {
+public:
+    virtual void enter() override;
+    virtual void loop() override;
+    virtual void exit() override;
+};

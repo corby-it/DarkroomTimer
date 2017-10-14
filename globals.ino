@@ -1,29 +1,33 @@
 #include "globals.h"
 #include "timer_functions.h"
 
+// Display
+LiquidCrystal lcd(
+    PIN_LCD_RS, 
+    PIN_LCD_ENABLE, 
+    PIN_LCD_D4,
+    PIN_LCD_D5,
+    PIN_LCD_D6,
+    PIN_LCD_D7
+);
 
-LiquidCrystal lcd(7, 6, 5, 4, 3, 2);
-
+// Counters
 uint32_t currTime = 0;
-digit currDigit = DIG_ONE;
-fstop currFstop = fstop::Base;
-
-uint32_t timerCounter = 0;
-
-bool running = false;
 
 // State machine stuff
-State stSetTime = State(stSetTimeEnter, stSetTimeLoop, stSetTimeExit);
-State stSetFstop = State(stSetFstopEnter, stSetFstopLoop, stSetFstopExit);
+EventDispatcher dispatcher;
 
-State stTestStrip = State(stTestStripEnter, stTestStripLoop, stTestStripExit);
-State stTestStripSelectTimeStop = State(stTestStripSelectTimeStopEnter, stTestStripSelectTimeStopLoop, stTestStripSelectTimeStopExit);
-State stTestStripReady = State(stTestStripReadyEnter, stTestStripReadyLoop, stTestStripReadyExit);
-State stTestStripRunning = State(stTestStripRunningEnter, stTestStripRunningLoop, stTestStripRunningExit);
+SplashScreenState stSplashScreen;
 
-State stRunning = State(stRunningEnter, stRunningLoop, stRunningExit);
-State stFocus = State(stFocusEnter, stFocusLoop, stFocusExit);
+SetTimeState stSetTime;
+SetFstopState stSetFstop;
 
-FiniteStateMachine fsm = FiniteStateMachine(stSetTime);
+TestStripState stTestStrip;
+TestStripSelectTimeState stTestStripSelectTime;
+TestStripReadyState stTestStripReady;
+TestStripRunningState stTestStripRunning;
 
-State* returnState = &stSetTime;
+RunningState stRunning;
+FocusState stFocus;
+
+FiniteStateMachine fsm = FiniteStateMachine(stSplashScreen);

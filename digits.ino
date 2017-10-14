@@ -1,4 +1,4 @@
-#include "utils.h"
+#include "digits.h"
 
 uint16_t getMult(digit d) {
     switch (d) {
@@ -29,4 +29,14 @@ uint8_t getDigit(uint32_t t, digit d) {
 
 String t2s(uint32_t t) {
     return String(t / 10) + "." + t % 10 + "s";
+}
+
+String t2slcd(uint32_t t, bool withSec) {
+    auto res = String(t / 10) + "." + t % 10;
+    if (res.length() == 3)
+        res = "00" + res;
+    else if (res.length() == 4)
+        res = "0" + res;
+
+    return withSec ? res + "s" : res;
 }

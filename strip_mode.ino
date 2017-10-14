@@ -8,24 +8,26 @@ static fstop fStep = Third;
 // ------------------------------------
 // STATE "TestStrip"
 // ------------------------------------
-void stTestStripEnter() {
+void TestStripState::enter() {
     DBG("stTestStripEnter");
-    returnState = &stTestStrip;
+
+    lcd.clear();
+    lcd.print("StripMode:");
 }
 
-void stTestStripLoop() {
+void TestStripState::loop() {
     switch (getInput()) {
     case BtnId::Mode:
         fsm.transitionTo(stSetTime);
         break;
     case BtnId::StartStop:
-        fsm.transitionTo(stTestStripSelectTimeStop);
+        fsm.transitionTo(stTestStripSelectTime);
         break;
     default: break;
     }
 }
 
-void stTestStripExit() {
+void TestStripState::exit() {
     DBG("stTestStripExit");
 }
 
@@ -33,15 +35,15 @@ void stTestStripExit() {
 // ------------------------------------
 // STATE "TestStripSelectTimeStop"
 // ------------------------------------
-void stTestStripSelectTimeStopEnter() {
+void TestStripSelectTimeState::enter() {
     DBG("stTestStripSelectTimeStopEnter");
 }
 
-void stTestStripSelectTimeStopLoop() {
+void TestStripSelectTimeState::loop() {
 
 }
 
-void stTestStripSelectTimeStopExit() {
+void TestStripSelectTimeState::exit() {
     DBG("stTestStripSelectTimeStopExit");
 }
 
@@ -49,15 +51,15 @@ void stTestStripSelectTimeStopExit() {
 // ------------------------------------
 // STATE "TestStripReady"
 // ------------------------------------
-void stTestStripReadyEnter() {
+void TestStripReadyState::enter() {
     DBG("stTestStripReadyEnter");
 }
 
-void stTestStripReadyLoop() {
+void TestStripReadyState::loop() {
 
 }
 
-void stTestStripReadyExit() {
+void TestStripReadyState::exit() {
     DBG("stTestStripReadyExit");
 }
 
@@ -65,15 +67,15 @@ void stTestStripReadyExit() {
 // ------------------------------------
 // STATE "TestStripRunning"
 // ------------------------------------
-void stTestStripRunningEnter() {
+void TestStripRunningState::enter() {
     DBG("stTestStripRunningEnter");
 }
 
-void stTestStripRunningLoop() {
+void TestStripRunningState::loop() {
 
 }
 
-void stTestStripRunningExit() {
+void TestStripRunningState::exit() {
     DBG("stTestStripRunningExit");
 }
 

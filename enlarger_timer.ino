@@ -1,10 +1,20 @@
 #define DEBUGGING
 #include <LiquidCrystal.h>
-#include <FSM\FiniteStateMachine.h>
 
 #include "defs.h"
 #include "btns.h"
 #include "globals.h"
+
+byte plusMinus[] = {
+    B00000,
+    B00100,
+    B00100,
+    B11111,
+    B00100,
+    B00100,
+    B11111,
+    B00000,
+};
 
 
 void setup() {
@@ -18,27 +28,29 @@ void setup() {
     TCCR1B |= (1 << CS10) | (1 << CS11); // set prescaler to 64
     TIMSK1 |= (1 << TOIE1); // enable timer overflow interrupt
 
+    lcd.createChar(7, plusMinus);
     lcd.begin(16, 2);
-    lcd.println("Ciao corby");
 }
 
 // ------------------------------------
 
 void loop() {
-    fsm.update();
+    fsm.loop();
 }
 
 // timer1 overflow interrupt
 ISR(TIMER1_OVF_vect) {
     TCNT1 = TIMER_START; // start value to get an interrupt every 0.1 seconds
+    dispatcher.dispatch();
 
-    if (running) {
-        if (timerCounter < currTime) {
-            timerCounter++;
-            DBG(String("Running: ") + t2s(timerCounter) + "/" + t2s(currTime));
-        }
-        else {
-            fsm.transitionTo(*returnState);
-        }
-    }
+    //if (running) 
+    //    if (timerCounter < currTime) {
+    //        timerCounter++;
+    //        stRunning.updateLcd();
+    //        DBG(String("Running: ") + t2s(timerCounter) + "/" + t2s(currTime));
+    //    }
+    //    else {
+    //        fsm.transitionTo(*returnState);
+    //    }
+    //}
 }

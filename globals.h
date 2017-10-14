@@ -1,30 +1,27 @@
 #pragma once
 #include "digits.h"
 #include "fstop.h"
+#include "timer_functions.h"
+#include "strip_mode.h"
 
 // Display
 extern LiquidCrystal lcd;
 
 // Counters
 extern uint32_t currTime;
-extern digit currDigit;
-extern fstop currFstop;
-
-extern uint32_t timerCounter;
-
-extern bool running;
 
 // State machine stuff
-extern State stSetTime;
-extern State stSetFstop;
-extern State stTestStrip;
-extern State stTestStripSelectTimeStop;
-extern State stTestStripReady;
-extern State stTestStripRunning;
-extern State stRunning;
-extern State stFocus;
+extern EventDispatcher dispatcher;
+
+extern SetTimeState stSetTime;
+extern SetFstopState stSetFstop;
+
+extern TestStripState stTestStrip;
+extern TestStripSelectTimeState stTestStripSelectTime;
+extern TestStripReadyState stTestStripReady;
+extern TestStripRunningState stTestStripRunning;
+
+extern RunningState stRunning;
+extern FocusState stFocus;
 
 extern FiniteStateMachine fsm;
-
-extern State* returnState;
-
