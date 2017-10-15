@@ -17,9 +17,12 @@ public:
     virtual void loop() override;
     virtual void exit() override;
 
+    friend class SetFstopState;
+
 private:
     static const uint8_t lcdTimeCursorPos = 5;
     digit currDigit = DIG_ONE;
+    uint32_t currTime = 0;
 
     void updateLcd();
 };
@@ -53,7 +56,7 @@ public:
     void updateLcd();
     
     State *returnState;
-
+    uint32_t exposureTime = 0;
 private:
     static const uint8_t lcdTimeCursorPos = 0;
     uint32_t timerCounter = 0;

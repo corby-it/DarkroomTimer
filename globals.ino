@@ -11,9 +11,6 @@ LiquidCrystal lcd(
     PIN_LCD_D7
 );
 
-// Counters
-uint32_t currTime = 0;
-
 // State machine stuff
 EventDispatcher dispatcher;
 

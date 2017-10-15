@@ -16,9 +16,9 @@ void TestStripState::enter() {
     stTestStripRunning.reset();
 
     lcd.clear();
-    lcd.print("Test Strip Mode:");
+    lcd.print(F("Test Strip Mode:"));
     lcd.setCursor(0, 1);
-    lcd.print("<-Mode | Start->");
+    lcd.print(F("<-Mode | Start->"));
 }
 
 void TestStripState::loop() {
@@ -48,9 +48,9 @@ void TestStripSelectTimeState::enter() {
     DBG("stTestStripSelectTimeStopEnter");
 
     lcd.clear();
-    lcd.print("Time   ||   Step");
+    lcd.print(F("Time   ||   Step"));
     lcd.setCursor(7, 1);
-    lcd.print("||");
+    lcd.print(F("||"));
     updateLcd();
     lcd.blink();
 }
@@ -126,15 +126,15 @@ void TestStripReadyState::enter() {
     DBG("stTestStripReadyEnter");
     
     lcd.clear();
-    lcd.print("Strip: ");
+    lcd.print(F("Strip: "));
     
     if (exposureCounter == 0)
-        lcd.print("Base");
+        lcd.print(F("Base"));
     else
-        lcd.print(String("# ") + exposureCounter);
+        lcd.print(String(F("# ")) + exposureCounter);
     
     lcd.setCursor(0, 1);
-    lcd.print(t2slcd(currTime) + " / " + t2slcd(totalTime));
+    lcd.print(t2slcd(currTime) + F(" / ") + t2slcd(totalTime));
 }
 
 void TestStripReadyState::loop() {
@@ -183,9 +183,9 @@ void TestStripRunningState::enter() {
 
         lcd.clear();
         lcd.setCursor(4, 0);
-        lcd.print("Running!");
+        lcd.print(F("Running!"));
         lcd.setCursor(lcdTimeCursorPos, 1);
-        lcd.print(t2slcd(0) + " -> " + t2slcd(exposureTime));
+        lcd.print(t2slcd(0) + F(" -> ") + t2slcd(exposureTime));
     }
 
     dispatcher.subscribe(*this);
@@ -222,4 +222,3 @@ void TestStripRunningState::exit() {
 
     reset();
 }
-

@@ -7,9 +7,9 @@
 // ------------------------------------
 void SplashScreenState::enter() {
     lcd.setCursor(1, 0);
-    lcd.print("Enlarger Timer");
+    lcd.print(F("Enlarger Timer"));
     lcd.setCursor(6, 1);
-    lcd.print("v1.0");
+    lcd.print(F("v1.0"));
 }
 
 void SplashScreenState::loop() {
@@ -32,7 +32,7 @@ void SetTimeState::enter() {
 
     // init lcd
     lcd.clear();
-    lcd.print("SetTime:");
+    lcd.print(F("SetTime:"));
     lcd.setCursor(lcdTimeCursorPos, 1);
     lcd.print(t2slcd(currTime));
     updateLcd();
@@ -65,6 +65,7 @@ void SetTimeState::loop() {
         break;
     case BtnId::StartStop:
         stRunning.returnState = this;
+        stRunning.exposureTime = stSetTime.currTime;
         fsm.transitionTo(stRunning);
         break;
     case BtnId::Mode:
@@ -102,15 +103,15 @@ void SetFstopState::enter() {
     DBG("stSetFstopEnter");
 
     // to avoid a -INF number of stops
-    if (currTime == 0)
-        ++currTime;
+    if (stSetTime.currTime == 0)
+        stSetTime.currTime++;
 
-    DBG(String(t2f(currTime)) + " (" + t2s(currTime) + ")");
+    DBG(String(t2f(stSetTime.currTime)) + " (" + t2s(stSetTime.currTime) + ")");
 
     lcd.clear();
-    lcd.print("SetStop:");
+    lcd.print(F("SetStop:"));
     lcd.setCursor(6, 1);
-    lcd.print("->");
+    lcd.print(F("->"));
     updateLcd();
 }
 
@@ -126,15 +127,15 @@ void SetFstopState::loop() {
         DBG(getFstopName(currFstop));
         break;
     case BtnId::Up: {
-        uint32_t newTime = round(currTime * getFstopMult(currFstop, false));
-        currTime = newTime > MAX_TIMER_TIME ? MAX_TIMER_TIME : newTime;
-        DBG(String(t2f(currTime)) + " (" + t2s(currTime) + ")");
+        uint32_t newTime = round(stSetTime.currTime * getFstopMult(currFstop, false));
+        stSetTime.currTime = newTime > MAX_TIMER_TIME ? MAX_TIMER_TIME : newTime;
+        DBG(String(t2f(stSetTime.currTime)) + " (" + t2s(stSetTime.currTime) + ")");
         break;
     }
     case BtnId::Down: {
-        int32_t newTime = round(currTime * getFstopMult(currFstop, true));
-        currTime = newTime < MIN_TIMER_TIME ? MIN_TIMER_TIME : newTime;
-        DBG(String(t2f(currTime)) + " (" + t2s(currTime) + ")");
+        int32_t newTime = round(stSetTime.currTime * getFstopMult(currFstop, true));
+        stSetTime.currTime = newTime < MIN_TIMER_TIME ? MIN_TIMER_TIME : newTime;
+        DBG(String(t2f(stSetTime.currTime)) + " (" + t2s(stSetTime.currTime) + ")");
         break;
     }
     case BtnId::Focus:
@@ -143,6 +144,7 @@ void SetFstopState::loop() {
         break;
     case BtnId::StartStop:
         stRunning.returnState = this;
+        stRunning.exposureTime = stSetTime.currTime;
         fsm.transitionTo(stRunning);
         break;
     case BtnId::Mode:
@@ -159,9 +161,9 @@ void SetFstopState::updateLcd()
     lcd.setCursor(lcdStepCursorPos, 0);
     lcd.print(getFstopNameLcd(currFstop));
     lcd.setCursor(lcdStopCursorPos, 1);
-    lcd.print(t2flcd(currTime));
+    lcd.print(t2flcd(stSetTime.currTime));
     lcd.setCursor(lcdTimeCursorPos, 1);
-    lcd.print(t2slcd(currTime));
+    lcd.print(t2slcd(stSetTime.currTime));
 }
 
 void SetFstopState::exit() {
@@ -174,14 +176,14 @@ void SetFstopState::exit() {
 // ------------------------------------
 
 void RunningState::enter() {
-    if (currTime != 0) {
+    if (exposureTime != 0) {
         digitalWrite(PIN_LED, HIGH);
 
         lcd.clear();
         lcd.setCursor(4, 0);
-        lcd.print("Running!");
+        lcd.print(F("Running!"));
         lcd.setCursor(lcdTimeCursorPos, 1);
-        lcd.print(t2slcd(0) + " -> " + t2slcd(currTime));
+        lcd.print(t2slcd(0) + F(" -> ") + t2slcd(exposureTime));
     }
 
     dispatcher.subscribe(*this);
@@ -200,10 +202,10 @@ void RunningState::updateLcd() {
 }
 
 void RunningState::timerEvent() {
-    if (timerCounter < currTime) {
+    if (timerCounter < exposureTime) {
         timerCounter++;
         updateLcd();
-        DBG(String("Running: ") + t2s(timerCounter) + "/" + t2s(currTime));
+        DBG(String("Running: ") + t2s(timerCounter) + "/" + t2s(exposureTime));
     }
     else {
         fsm.transitionTo(*returnState);
@@ -229,7 +231,7 @@ void FocusState::enter() {
 
     lcd.clear();
     lcd.setCursor(3, 0);
-    lcd.print("Focusing...");
+    lcd.print(F("Focusing..."));
 }
 
 void FocusState::loop() {

@@ -7,9 +7,6 @@
 // Display
 extern LiquidCrystal lcd;
 
-// Counters
-extern uint32_t currTime;
-
 // State machine stuff
 extern EventDispatcher dispatcher;
 
