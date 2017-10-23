@@ -4,7 +4,6 @@
 #include <math.h>
 
 static uint32_t currBaseTime = 0;
-static fstop fStep = Third;
 
 // ------------------------------------
 // STATE "TestStrip"
@@ -67,15 +66,15 @@ void TestStripSelectTimeState::loop() {
         break;
     case BtnId::Up:
         if (currCursorPos != 4)
-            currBaseTime += getDigit(currBaseTime, 3 - currCursorPos) != 9 ? getMult(3 - currCursorPos) : 0;
+            currBaseTime += currBaseTime.getDigit(3 - currCursorPos) == 9 ? 0 : getMult(3 - currCursorPos);
         else
-            currStep = currStep == Three ? Three : fstop(currStep + 1);
+            currStep++;
         break;
     case BtnId::Down:
         if (currCursorPos != 4)
-            currBaseTime -= getDigit(currBaseTime, 3 - currCursorPos) != 0 ? getMult(3 - currCursorPos) : 0;
+            currBaseTime -= currBaseTime.getDigit(3 - currCursorPos) == 0 ? 0 : getMult(3 - currCursorPos);
         else
-            currStep = currStep == Third ? Third : fstop(currStep - 1);
+            currStep--;
         break;
     case BtnId::Focus:
         stFocus.returnState = this;
@@ -98,9 +97,9 @@ void TestStripSelectTimeState::loop() {
 
 void TestStripSelectTimeState::updateLcd() {
     lcd.setCursor(lcdTimeCursorPos, 1);
-    lcd.print(t2slcd(currBaseTime));
+    lcd.print(currBaseTime.str());
     lcd.setCursor(lcdStepCursorPos, 1);
-    lcd.print(getFstopNameLcdStrip(currStep));
+    lcd.print(currStep.nameLcdStrip());
 
     switch (currCursorPos) {
     case 0: lcd.setCursor(Hundred, 1); break;
@@ -134,7 +133,7 @@ void TestStripReadyState::enter() {
         lcd.print(String(F("# ")) + exposureCounter);
     
     lcd.setCursor(0, 1);
-    lcd.print(t2slcd(currTime) + F(" / ") + t2slcd(totalTime));
+    lcd.print(currTime.str() + F(" / ") + totalTime.str());
 }
 
 void TestStripReadyState::loop() {
@@ -158,15 +157,14 @@ void TestStripReadyState::exit() {
     DBG("stTestStripReadyExit");
 }
 
-void TestStripReadyState::setData(uint32_t time, fstop step) {
+void TestStripReadyState::setData(Time time, FStop step) {
     currTime = totalTime = time;
     incStep = step;
 };
 
 void TestStripReadyState::exposureDone() {
-    uint32_t newTotalTime = round(totalTime * getFstopMult(incStep, false));
-    newTotalTime = newTotalTime > MAX_TIMER_TIME ? MAX_TIMER_TIME : newTotalTime;
-
+    Time newTotalTime = totalTime + incStep;
+    
     currTime = newTotalTime - totalTime;
     totalTime = newTotalTime;
 
@@ -185,7 +183,7 @@ void TestStripRunningState::enter() {
         lcd.setCursor(4, 0);
         lcd.print(F("Running!"));
         lcd.setCursor(lcdTimeCursorPos, 1);
-        lcd.print(t2slcd(0) + F(" -> ") + t2slcd(exposureTime));
+        lcd.print(Time().str() + F(" -> ") + exposureTime.str());
     }
 
     dispatcher.subscribe(*this);
@@ -200,14 +198,14 @@ void TestStripRunningState::loop() {
 
 void TestStripRunningState::updateLcd() {
     lcd.setCursor(lcdTimeCursorPos, 1);
-    lcd.print(t2slcd(timerCounter));
+    lcd.print(timerCounter.str());
 }
 
 void TestStripRunningState::timerEvent() {
     if (timerCounter < exposureTime) {
         timerCounter++;
         updateLcd();
-        DBG(String("Running: ") + t2s(timerCounter) + "/" + t2s(exposureTime));
+        DBG(String("Running: ") + timerCounter.str() + "/" + exposureTime.str());
     }
     else {
         fsm.transitionTo(stTestStripReady);

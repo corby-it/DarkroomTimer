@@ -9,9 +9,6 @@
 
 typedef uint8_t digit;
 
-uint16_t getMult(digit d);
+uint32_t getMult(digit d);
 String getDigitName(digit d);
 uint8_t getDigit(uint32_t t, digit d);
-
-String t2s(uint32_t t);
-String t2slcd(uint32_t t, bool withSec = true);

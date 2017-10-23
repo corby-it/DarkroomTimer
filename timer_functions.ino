@@ -3,7 +3,7 @@
 
 
 // ------------------------------------
-// STATE "SetTime"
+// STATE "SplashScreen"
 // ------------------------------------
 void SplashScreenState::enter() {
     lcd.setCursor(1, 0);
@@ -34,7 +34,7 @@ void SetTimeState::enter() {
     lcd.clear();
     lcd.print(F("SetTime:"));
     lcd.setCursor(lcdTimeCursorPos, 1);
-    lcd.print(t2slcd(currTime));
+    lcd.print(currTime.str());
     updateLcd();
     lcd.blink();
 }
@@ -52,12 +52,12 @@ void SetTimeState::loop() {
         DBG(getDigitName(currDigit));
         break;
     case BtnId::Up:
-        currTime += getDigit(currTime, currDigit) != 9 ? getMult(currDigit) : 0;
-        DBG(t2s(currTime));
+        currTime += currTime.getDigit(currDigit) == 9 ? 0 : getMult(currDigit);
+        DBG(currTime.str());
         break;
     case BtnId::Down:
-        currTime -= getDigit(currTime, currDigit) != 0 ? getMult(currDigit) : 0;
-        DBG(t2s(currTime));
+        currTime -= currTime.getDigit(currDigit) == 0 ? 0 : getMult(currDigit);
+        DBG(currTime.str());
         break;
     case BtnId::Focus:
         stFocus.returnState = this;
@@ -65,7 +65,7 @@ void SetTimeState::loop() {
         break;
     case BtnId::StartStop:
         stRunning.returnState = this;
-        stRunning.exposureTime = stSetTime.currTime;
+        stRunning.exposureTime =    currTime;
         fsm.transitionTo(stRunning);
         break;
     case BtnId::Mode:
@@ -79,7 +79,7 @@ void SetTimeState::loop() {
 
 void SetTimeState::updateLcd() {
     lcd.setCursor(lcdTimeCursorPos, 1);
-    lcd.print(t2slcd(currTime));
+    lcd.print(currTime.str());
 
     switch (currDigit) {
     case DIG_TENTH: lcd.setCursor(lcdTimeCursorPos + 4, 1); break;
@@ -106,7 +106,7 @@ void SetFstopState::enter() {
     if (stSetTime.currTime == 0)
         stSetTime.currTime++;
 
-    DBG(String(t2f(stSetTime.currTime)) + " (" + t2s(stSetTime.currTime) + ")");
+    DBG(String(stSetTime.currTime.stops()) + " (" + stSetTime.currTime.str() + ")");
 
     lcd.clear();
     lcd.print(F("SetStop:"));
@@ -119,23 +119,21 @@ void SetFstopState::loop() {
     auto input = getInput();
     switch (input) {
     case BtnId::Left:
-        currFstop = fstop(currFstop == fstop::Base ? fstop::Base : currFstop - 1);
-        DBG(getFstopName(currFstop));
+        currFstop--;
+        DBG(currFstop.name());
         break;
     case BtnId::Right:
-        currFstop = fstop(currFstop == fstop::Three ? fstop::Three : currFstop + 1);
-        DBG(getFstopName(currFstop));
+        currFstop++;
+        DBG(currFstop.name());
         break;
     case BtnId::Up: {
-        uint32_t newTime = round(stSetTime.currTime * getFstopMult(currFstop, false));
-        stSetTime.currTime = newTime > MAX_TIMER_TIME ? MAX_TIMER_TIME : newTime;
-        DBG(String(t2f(stSetTime.currTime)) + " (" + t2s(stSetTime.currTime) + ")");
+        stSetTime.currTime += currFstop;
+        DBG(String(stSetTime.currTime.stops()) + " (" + stSetTime.currTime.str() + ")");
         break;
     }
     case BtnId::Down: {
-        int32_t newTime = round(stSetTime.currTime * getFstopMult(currFstop, true));
-        stSetTime.currTime = newTime < MIN_TIMER_TIME ? MIN_TIMER_TIME : newTime;
-        DBG(String(t2f(stSetTime.currTime)) + " (" + t2s(stSetTime.currTime) + ")");
+        stSetTime.currTime -= currFstop;
+        DBG(String(stSetTime.currTime.stops()) + " (" + stSetTime.currTime.str() + ")");
         break;
     }
     case BtnId::Focus:
@@ -159,11 +157,11 @@ void SetFstopState::loop() {
 void SetFstopState::updateLcd()
 {
     lcd.setCursor(lcdStepCursorPos, 0);
-    lcd.print(getFstopNameLcd(currFstop));
+    lcd.print(currFstop.name());
     lcd.setCursor(lcdStopCursorPos, 1);
-    lcd.print(t2flcd(stSetTime.currTime));
+    lcd.print(stSetTime.currTime.stopsStr());
     lcd.setCursor(lcdTimeCursorPos, 1);
-    lcd.print(t2slcd(stSetTime.currTime));
+    lcd.print(stSetTime.currTime.str());
 }
 
 void SetFstopState::exit() {
@@ -183,7 +181,7 @@ void RunningState::enter() {
         lcd.setCursor(4, 0);
         lcd.print(F("Running!"));
         lcd.setCursor(lcdTimeCursorPos, 1);
-        lcd.print(t2slcd(0) + F(" -> ") + t2slcd(exposureTime));
+        lcd.print(Time().str() + F(" -> ") + exposureTime.str());
     }
 
     dispatcher.subscribe(*this);
@@ -198,14 +196,14 @@ void RunningState::loop() {
 
 void RunningState::updateLcd() {
     lcd.setCursor(lcdTimeCursorPos, 1);
-    lcd.print(t2slcd(timerCounter));
+    lcd.print(timerCounter.str());
 }
 
 void RunningState::timerEvent() {
     if (timerCounter < exposureTime) {
         timerCounter++;
         updateLcd();
-        DBG(String("Running: ") + t2s(timerCounter) + "/" + t2s(exposureTime));
+        DBG(String("Running: ") + timerCounter.str() + "/" + exposureTime.str());
     }
     else {
         fsm.transitionTo(*returnState);

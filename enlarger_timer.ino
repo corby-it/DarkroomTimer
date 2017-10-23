@@ -1,4 +1,4 @@
-#define DEBUGGING
+//#define DEBUGGING
 #include <LiquidCrystal.h>
 
 #include "defs.h"
@@ -42,15 +42,4 @@ void loop() {
 ISR(TIMER1_OVF_vect) {
     TCNT1 = TIMER_START; // start value to get an interrupt every 0.1 seconds
     dispatcher.dispatch();
-
-    //if (running) 
-    //    if (timerCounter < currTime) {
-    //        timerCounter++;
-    //        stRunning.updateLcd();
-    //        DBG(String("Running: ") + t2s(timerCounter) + "/" + t2s(currTime));
-    //    }
-    //    else {
-    //        fsm.transitionTo(*returnState);
-    //    }
-    //}
 }

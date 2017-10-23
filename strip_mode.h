@@ -10,6 +10,8 @@ public:
 
 class TestStripSelectTimeState : public State {
 public:
+    TestStripSelectTimeState() : currStep(FStopVal::Third) {}
+
     virtual void enter() override;
     virtual void loop() override;
     virtual void exit() override;
@@ -27,8 +29,8 @@ private:
     };
 
     uint8_t currCursorPos = 2;
-    uint32_t currBaseTime = 0;
-    fstop currStep = Third;
+    Time currBaseTime = 10;
+    FStop currStep;
 
     void updateLcd();
 };
@@ -40,19 +42,20 @@ public:
     virtual void loop() override;
     virtual void exit() override;
 
-    void setData(uint32_t time, fstop step);
+    void setData(Time time, FStop step);
     void exposureDone();
 
     void reset() {
-        incStep = Third;
+        incStep = FStopVal::Third;
         currTime = 0;
         totalTime = 0;
         exposureCounter = 0;
     };
 
 private:
-    fstop incStep = Third;
-    uint32_t currTime = 0, totalTime = 0;
+    FStop incStep = FStopVal::Third;
+    Time currTime;
+    Time totalTime;
     uint8_t exposureCounter = 0;
 };
 
@@ -70,11 +73,11 @@ public:
         timerCounter = 0;
     };
 
-    uint32_t exposureTime;
+    Time exposureTime;
 
 private:
     static const uint8_t lcdTimeCursorPos = 0;
-    uint32_t timerCounter = 0;
+    Time timerCounter;
 
     void updateLcd();
 };
