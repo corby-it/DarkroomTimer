@@ -9,7 +9,7 @@ Button btnFocus = Button(PIN_BTN_FOCUS, PULLUP);
 Button btnMode = Button(PIN_BTN_MODE, PULLUP);
 
 
-BtnId getInput() {
+BtnId getInputReal() {
     if (btnLeft.uniquePress()) return BtnId::Left;
     else if (btnRight.uniquePress()) return BtnId::Right;
     else if (btnUp.uniquePress()) return BtnId::Up;
@@ -18,6 +18,14 @@ BtnId getInput() {
     else if (btnFocus.uniquePress()) return BtnId::Focus;
     else if (btnMode.uniquePress()) return BtnId::Mode;
     else return BtnId::None;
+}
+
+BtnId getInput() {
+    auto res = getInputReal();
+    if (res != BtnId::None) {
+        DBG(String("") + millis() + " " + getInputName(res));
+    }
+    return res;
 }
 
 String getInputName(BtnId id)

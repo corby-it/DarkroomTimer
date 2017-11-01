@@ -9,7 +9,7 @@ void SplashScreenState::enter() {
     lcd.setCursor(1, 0);
     lcd.print(F("Enlarger Timer"));
     lcd.setCursor(6, 1);
-    lcd.print(F("v1.0"));
+    lcd.print(VERSION);
 }
 
 void SplashScreenState::loop() {
@@ -32,7 +32,7 @@ void SetTimeState::enter() {
 
     // init lcd
     lcd.clear();
-    lcd.print(F("SetTime:"));
+    lcd.print(F("Set Time:"));
     lcd.setCursor(lcdTimeCursorPos, 1);
     lcd.print(currTime.str());
     updateLcd();
@@ -109,7 +109,7 @@ void SetFstopState::enter() {
     DBG(String(stSetTime.currTime.stops()) + " (" + stSetTime.currTime.str() + ")");
 
     lcd.clear();
-    lcd.print(F("SetStop:"));
+    lcd.print(F("Set Stop:"));
     lcd.setCursor(6, 1);
     lcd.print(F("->"));
     updateLcd();
@@ -146,7 +146,7 @@ void SetFstopState::loop() {
         fsm.transitionTo(stRunning);
         break;
     case BtnId::Mode:
-        fsm.transitionTo(stTestStrip);
+        fsm.transitionTo(stTestStripStop);
         break;
     }
 

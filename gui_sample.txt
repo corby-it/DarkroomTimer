@@ -28,16 +28,28 @@ Focusing
 
 ----------------+
 
-TestStrip
+TestStripStop
 ----------------+
-Test Strip Mode:
+Stop Strip Mode:
 <-Mode | Start->
 ----------------+
 
-TestStrip select time and step
+TestStripStop select step
 ----------------+
 Time   ||   Step
 000.0s || xxxxxx
+----------------+
+
+TestStripTime
+----------------+
+Time Strip Mode:
+<-Mode | Start->
+----------------+
+
+TestStripTime select step
+----------------+
+Time   ||   Step
+000.0s || 000.0s
 ----------------+
 
 TestStrip ready

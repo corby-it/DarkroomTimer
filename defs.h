@@ -1,5 +1,7 @@
 #pragma once
 
+#define VERSION F("v1.0")
+
 #ifdef DEBUGGING
 #define DBG(x) Serial.println((x))
 #define DBG_START() Serial.begin(115200)
@@ -24,6 +26,7 @@
 #define PIN_BTN_START	A0
 #define PIN_BTN_FOCUS   A1
 #define PIN_BTN_MODE    A2
+//#define PIN_LCD_BRIGHT  10
 
 #define PIN_LCD_RS      7
 #define PIN_LCD_ENABLE  6

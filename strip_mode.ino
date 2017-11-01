@@ -3,24 +3,57 @@
 #include "fstop.h"
 #include <math.h>
 
-static uint32_t currBaseTime = 0;
 
 // ------------------------------------
-// STATE "TestStrip"
+// STATE "TestStripStop"
 // ------------------------------------
-void TestStripState::enter() {
-    DBG("stTestStripEnter");
+void TestStripStopState::enter() {
+    DBG("stTestStripStopStateExit");
 
     stTestStripReady.reset();
     stTestStripRunning.reset();
 
     lcd.clear();
-    lcd.print(F("Test Strip Mode:"));
+    lcd.print(F("Stop Strip Mode:"));
     lcd.setCursor(0, 1);
     lcd.print(F("<-Mode | Start->"));
 }
 
-void TestStripState::loop() {
+void TestStripStopState::loop() {
+    switch (getInput()) {
+    case BtnId::Mode:
+        fsm.transitionTo(stTestStripTime);
+        break;
+    case BtnId::StartStop:
+        fsm.transitionTo(stTestStripSelectStop);
+        break;
+    case BtnId::Focus:
+        stFocus.returnState = this;
+        fsm.transitionTo(stFocus);
+    default: break;
+    }
+}
+
+void TestStripStopState::exit() {
+    DBG("stTestStripStopStateExit");
+}
+
+// ------------------------------------
+// STATE "TestStripTime"
+// ------------------------------------
+void TestStripTimeState::enter() {
+    DBG("stTestStripTimeStateEnter");
+
+    stTestStripReady.reset();
+    stTestStripRunning.reset();
+
+    lcd.clear();
+    lcd.print(F("Time Strip Mode:"));
+    lcd.setCursor(0, 1);
+    lcd.print(F("<-Mode | Start->"));
+}
+
+void TestStripTimeState::loop() {
     switch (getInput()) {
     case BtnId::Mode:
         fsm.transitionTo(stSetTime);
@@ -35,16 +68,15 @@ void TestStripState::loop() {
     }
 }
 
-void TestStripState::exit() {
-    DBG("stTestStripExit");
+void TestStripTimeState::exit() {
+    DBG("stTestStripTimeStateExit");
 }
 
-
 // ------------------------------------
-// STATE "TestStripSelectTimeStop"
+// STATE "TestStripSelectStopState"
 // ------------------------------------
-void TestStripSelectTimeState::enter() {
-    DBG("stTestStripSelectTimeStopEnter");
+void TestStripSelectStopState::enter() {
+    DBG("stTestStripSelectStopStateEnter");
 
     lcd.clear();
     lcd.print(F("Time   ||   Step"));
@@ -54,7 +86,7 @@ void TestStripSelectTimeState::enter() {
     lcd.blink();
 }
 
-void TestStripSelectTimeState::loop() {
+void TestStripSelectStopState::loop() {
     auto input = getInput();
 
     switch (input) {
@@ -73,7 +105,7 @@ void TestStripSelectTimeState::loop() {
     case BtnId::Down:
         if (currCursorPos != 4)
             currBaseTime -= currBaseTime.getDigit(3 - currCursorPos) == 0 ? 0 : getMult(3 - currCursorPos);
-        else
+        else if(currStep != FStop::lowest)
             currStep--;
         break;
     case BtnId::Focus:
@@ -85,7 +117,7 @@ void TestStripSelectTimeState::loop() {
         fsm.transitionTo(stTestStripReady);
         break;
     case BtnId::Mode:
-        fsm.transitionTo(stTestStrip);
+        fsm.transitionTo(stTestStripStop);
         break;
     default:
         break;
@@ -95,7 +127,7 @@ void TestStripSelectTimeState::loop() {
         updateLcd();
 }
 
-void TestStripSelectTimeState::updateLcd() {
+void TestStripSelectStopState::updateLcd() {
     lcd.setCursor(lcdTimeCursorPos, 1);
     lcd.print(currBaseTime.str());
     lcd.setCursor(lcdStepCursorPos, 1);
@@ -111,11 +143,93 @@ void TestStripSelectTimeState::updateLcd() {
     }
 }
 
-void TestStripSelectTimeState::exit() {
-    DBG("stTestStripSelectTimeStopExit");
+void TestStripSelectStopState::exit() {
+    DBG("stTestStripSelectStopStateExit");
 
     lcd.noBlink();
 }
+
+
+// ------------------------------------
+// STATE "TestStripSelectTimeState"
+// ------------------------------------
+void TestStripSelectTimeState::enter() {
+    DBG("stTestStripSelectTimeStateEnter");
+
+    lcd.clear();
+    lcd.print(F("Time   ||   Step"));
+    lcd.setCursor(7, 1);
+    lcd.print(F("||"));
+    updateLcd();
+    lcd.blink();
+}
+
+void TestStripSelectTimeState::loop() {
+    auto input = getInput();
+
+    switch (input) {
+    case BtnId::Left:
+        currCursorPos = currCursorPos == 0 ? 0 : currCursorPos - 1;
+        break;
+    case BtnId::Right:
+        currCursorPos = currCursorPos == 7 ? 7 : currCursorPos + 1;
+        break;
+    case BtnId::Up:
+        if (currCursorPos < 4)
+            currBaseTime += currBaseTime.getDigit(3 - currCursorPos) == 9 ? 0 : getMult(3 - currCursorPos);
+        else
+            currStepTime += currStepTime.getDigit(7 - currCursorPos) == 9 ? 0 : getMult(7 - currCursorPos);
+        break;
+    case BtnId::Down:
+        if (currCursorPos < 4)
+            currBaseTime -= currBaseTime.getDigit(3 - currCursorPos) == 0 ? 0 : getMult(3 - currCursorPos);
+        else
+            currStepTime -= currStepTime.getDigit(7 - currCursorPos) == 0 ? 0 : getMult(7 - currCursorPos);
+        break;
+    case BtnId::Focus:
+        stFocus.returnState = this;
+        fsm.transitionTo(stFocus);
+        break;
+    case BtnId::StartStop:
+        stTestStripReady.setData(currBaseTime, currStepTime);
+        fsm.transitionTo(stTestStripReady);
+        break;
+    case BtnId::Mode:
+        fsm.transitionTo(stTestStripStop);
+        break;
+    default:
+        break;
+    }
+
+    if (input != BtnId::None)
+        updateLcd();
+}
+
+void TestStripSelectTimeState::updateLcd() {
+    lcd.setCursor(lcdTimeCursorPos, 1);
+    lcd.print(currBaseTime.str());
+    lcd.setCursor(lcdStepCursorPos, 1);
+    lcd.print(currStepTime.str());
+
+    switch (currCursorPos) {
+    case 0: lcd.setCursor(BaseHundred, 1); break;
+    case 1: lcd.setCursor(BaseTen, 1); break;
+    case 2: lcd.setCursor(BaseOne, 1); break;
+    case 3: lcd.setCursor(BaseTenth, 1); break;
+    case 4: lcd.setCursor(StepHundred, 1); break;
+    case 5: lcd.setCursor(StepTen, 1); break;
+    case 6: lcd.setCursor(StepOne, 1); break;
+    case 7: lcd.setCursor(StepTenth, 1); break;
+    default: break;
+    }
+}
+
+void TestStripSelectTimeState::exit() {
+    DBG("stTestStripSelectTimeStateExit");
+
+    lcd.noBlink();
+}
+
 
 
 // ------------------------------------
@@ -143,11 +257,7 @@ void TestStripReadyState::loop() {
         fsm.transitionTo(stTestStripRunning);
         break;
     case BtnId::Mode:
-        fsm.transitionTo(stTestStrip);
-        break;
-    case BtnId::Focus:
-        stFocus.returnState = this;
-        fsm.transitionTo(stFocus);
+        fsm.transitionTo(stTestStripStop);
         break;
     default: break;
     }
@@ -159,11 +269,18 @@ void TestStripReadyState::exit() {
 
 void TestStripReadyState::setData(Time time, FStop step) {
     currTime = totalTime = time;
-    incStep = step;
+    stopStep = step;
+    useStop = true;
+};
+
+void TestStripReadyState::setData(Time time, Time step) {
+    currTime = totalTime = time;
+    timeStep = step;
+    useStop = false;
 };
 
 void TestStripReadyState::exposureDone() {
-    Time newTotalTime = totalTime + incStep;
+    Time newTotalTime = useStop ? totalTime + stopStep : totalTime + timeStep;
     
     currTime = newTotalTime - totalTime;
     totalTime = newTotalTime;

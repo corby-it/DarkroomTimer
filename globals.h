@@ -13,10 +13,16 @@ extern EventDispatcher dispatcher;
 extern SetTimeState stSetTime;
 extern SetFstopState stSetFstop;
 
-extern TestStripState stTestStrip;
+// test strip
+extern TestStripStopState stTestStripStop;
+extern TestStripSelectStopState stTestStripSelectStop;
+
+extern TestStripTimeState stTestStripTime;
 extern TestStripSelectTimeState stTestStripSelectTime;
+
 extern TestStripReadyState stTestStripReady;
 extern TestStripRunningState stTestStripRunning;
+
 
 extern RunningState stRunning;
 extern FocusState stFocus;

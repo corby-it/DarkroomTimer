@@ -19,10 +19,16 @@ SplashScreenState stSplashScreen;
 SetTimeState stSetTime;
 SetFstopState stSetFstop;
 
-TestStripState stTestStrip;
+// test stip
+TestStripStopState stTestStripStop;
+TestStripSelectStopState stTestStripSelectStop;
+
+TestStripTimeState stTestStripTime;
 TestStripSelectTimeState stTestStripSelectTime;
+
 TestStripReadyState stTestStripReady;
 TestStripRunningState stTestStripRunning;
+
 
 RunningState stRunning;
 FocusState stFocus;
