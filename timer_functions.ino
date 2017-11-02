@@ -175,7 +175,7 @@ void SetFstopState::exit() {
 
 void RunningState::enter() {
     if (exposureTime != 0) {
-        digitalWrite(PIN_LED, HIGH);
+        digitalWrite(PIN_LED, LAMP_ON);
 
         lcd.clear();
         lcd.setCursor(4, 0);
@@ -211,7 +211,7 @@ void RunningState::timerEvent() {
 }
 
 void RunningState::exit() {
-    digitalWrite(PIN_LED, LOW);
+    digitalWrite(PIN_LED, LAMP_OFF);
 
     dispatcher.unsubscribe(*this);
     timerCounter = 0;
@@ -225,7 +225,7 @@ void RunningState::exit() {
 
 void FocusState::enter() {
     DBG("stFocusEnter");
-    digitalWrite(PIN_LED, HIGH);
+    digitalWrite(PIN_LED, LAMP_ON);
 
     lcd.clear();
     lcd.setCursor(3, 0);
@@ -239,5 +239,5 @@ void FocusState::loop() {
 
 void FocusState::exit() {
     DBG("stFocusExit");
-    digitalWrite(PIN_LED, LOW);
+    digitalWrite(PIN_LED, LAMP_OFF);
 }

@@ -20,6 +20,7 @@ byte plusMinus[] = {
 void setup() {
     DBG_START();
     pinMode(PIN_LED, OUTPUT);
+    digitalWrite(PIN_LED, LAMP_OFF);
     
     // TIMER
     TCCR1A = 0;

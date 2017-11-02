@@ -17,6 +17,9 @@
 
 #define PLUSMINUS_SYM   7
 
+#define LAMP_ON         LOW        
+#define LAMP_OFF        HIGH
+
 // PINS
 #define PIN_LED			8
 #define PIN_BTN_LEFT	12
@@ -26,7 +29,6 @@
 #define PIN_BTN_START	A0
 #define PIN_BTN_FOCUS   A1
 #define PIN_BTN_MODE    A2
-//#define PIN_LCD_BRIGHT  10
 
 #define PIN_LCD_RS      7
 #define PIN_LCD_ENABLE  6

@@ -294,7 +294,7 @@ void TestStripReadyState::exposureDone() {
 // ------------------------------------
 void TestStripRunningState::enter() {
     if (exposureTime != 0) {
-        digitalWrite(PIN_LED, HIGH);
+        digitalWrite(PIN_LED, LAMP_ON);
 
         lcd.clear();
         lcd.setCursor(4, 0);
@@ -330,7 +330,7 @@ void TestStripRunningState::timerEvent() {
 }
 
 void TestStripRunningState::exit() {
-    digitalWrite(PIN_LED, LOW);
+    digitalWrite(PIN_LED, LAMP_OFF);
 
     dispatcher.unsubscribe(*this);
     stTestStripReady.exposureDone();
