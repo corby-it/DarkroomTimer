@@ -22,9 +22,11 @@
 
 // PINS
 #define PIN_LED			8
+#define PIN_BUZZER       9
+
 #define PIN_BTN_LEFT	12
 #define PIN_BTN_RIGHT	11
-#define PIN_BTN_UP		9
+#define PIN_BTN_UP		A3
 #define PIN_BTN_DOWN	10
 #define PIN_BTN_START	A0
 #define PIN_BTN_FOCUS   A1

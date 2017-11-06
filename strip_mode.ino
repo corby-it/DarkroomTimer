@@ -301,6 +301,8 @@ void TestStripRunningState::enter() {
         lcd.print(F("Running!"));
         lcd.setCursor(lcdTimeCursorPos, 1);
         lcd.print(Time().str() + F(" -> ") + exposureTime.str());
+
+        playOnTone();
     }
 
     dispatcher.subscribe(*this);
@@ -334,6 +336,9 @@ void TestStripRunningState::exit() {
 
     dispatcher.unsubscribe(*this);
     stTestStripReady.exposureDone();
+
+    if (exposureTime != 0)
+        playOffTone();
 
     reset();
 }

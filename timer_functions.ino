@@ -1,5 +1,6 @@
 #include "timer_functions.h"
 #include "globals.h"
+#include "buzzer.h"
 
 
 // ------------------------------------
@@ -182,6 +183,8 @@ void RunningState::enter() {
         lcd.print(F("Running!"));
         lcd.setCursor(lcdTimeCursorPos, 1);
         lcd.print(Time().str() + F(" -> ") + exposureTime.str());
+
+        playOnTone();
     }
 
     dispatcher.subscribe(*this);
@@ -214,6 +217,10 @@ void RunningState::exit() {
     digitalWrite(PIN_LED, LAMP_OFF);
 
     dispatcher.unsubscribe(*this);
+
+    if (exposureTime != 0)
+        playOffTone();
+
     timerCounter = 0;
     DBG("stRunningExit");
 }

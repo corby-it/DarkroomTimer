@@ -21,6 +21,8 @@ void setup() {
     DBG_START();
     pinMode(PIN_LED, OUTPUT);
     digitalWrite(PIN_LED, LAMP_OFF);
+
+    pinMode(PIN_BUZZER, OUTPUT);
     
     // TIMER
     TCCR1A = 0;
