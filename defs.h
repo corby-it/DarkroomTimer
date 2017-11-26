@@ -22,7 +22,7 @@
 
 // PINS
 #define PIN_LED			8
-#define PIN_BUZZER       9
+#define PIN_BUZZER      9
 
 #define PIN_BTN_LEFT	12
 #define PIN_BTN_RIGHT	11

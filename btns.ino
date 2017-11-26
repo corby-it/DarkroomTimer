@@ -8,16 +8,70 @@ Button btnStart = Button(PIN_BTN_START, PULLUP);
 Button btnFocus = Button(PIN_BTN_FOCUS, PULLUP);
 Button btnMode = Button(PIN_BTN_MODE, PULLUP);
 
+static const uint32_t debounceInterval = 100;  // milliseconds
+
+static uint32_t btnLeftLastPress = 0;
+static uint32_t btnRightLastPress = 0;
+static uint32_t btnUpLastPress = 0;
+static uint32_t btnDownLastPress = 0;
+static uint32_t btnStartLastPress = 0;
+static uint32_t btnFocusLastPress = 0;
+static uint32_t btnModeLastPress = 0;
 
 BtnId getInputReal() {
-    if (btnLeft.uniquePress()) return BtnId::Left;
-    else if (btnRight.uniquePress()) return BtnId::Right;
-    else if (btnUp.uniquePress()) return BtnId::Up;
-    else if (btnDown.uniquePress()) return BtnId::Down;
-    else if (btnStart.uniquePress()) return BtnId::StartStop;
-    else if (btnFocus.uniquePress()) return BtnId::Focus;
-    else if (btnMode.uniquePress()) return BtnId::Mode;
-    else return BtnId::None;
+
+    if (btnLeft.uniquePress()) {
+        if (millis() - btnLeftLastPress >= debounceInterval) {
+            btnLeftLastPress = millis();
+            return BtnId::Left;
+        }
+        else return BtnId::None;
+    }
+    else if (btnRight.uniquePress()) {
+        if (millis() - btnRightLastPress >= debounceInterval) {
+            btnRightLastPress = millis();
+            return BtnId::Right;
+        }
+        else return BtnId::None;
+    }
+    else if (btnUp.uniquePress()) {
+        if (millis() - btnUpLastPress >= debounceInterval) {
+            btnUpLastPress = millis();
+            return BtnId::Up;
+        }
+        else return BtnId::None;
+    }
+    else if (btnDown.uniquePress()) {
+        if (millis() - btnDownLastPress >= debounceInterval) {
+            btnDownLastPress = millis();
+            return BtnId::Down;
+        }
+        else return BtnId::None;
+    }
+    else if (btnStart.uniquePress()) {
+        if (millis() - btnStartLastPress >= debounceInterval) {
+            btnStartLastPress = millis();
+            return BtnId::Start;
+        }
+        else return BtnId::None;
+    }
+    else if (btnMode.uniquePress()) {
+        if (millis() - btnModeLastPress >= debounceInterval) {
+            btnModeLastPress = millis();
+            return BtnId::Mode;
+        }
+        else return BtnId::None;
+    }
+    else if (btnFocus.uniquePress()) {
+        if (millis() - btnFocusLastPress >= debounceInterval) {
+            btnFocusLastPress = millis();
+            return BtnId::Focus;
+        }
+        else return BtnId::None;
+    }
+    else {
+        return BtnId::None;
+    }
 }
 
 BtnId getInput() {
@@ -35,7 +89,7 @@ String getInputName(BtnId id)
     case BtnId::Right: return "btn_right";
     case BtnId::Up: return "btn_up";
     case BtnId::Down: return "btn_down";
-    case BtnId::StartStop: return "btn_start";
+    case BtnId::Start: return "btn_start";
     case BtnId::Focus: return "btn_focus";
     case BtnId::Mode: return "btn_mode";
     case BtnId::None: return "none";

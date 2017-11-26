@@ -8,7 +8,6 @@
 // STATE "TestStripStop"
 // ------------------------------------
 void TestStripStopState::enter() {
-    DBG("stTestStripStopStateExit");
 
     stTestStripReady.reset();
     stTestStripRunning.reset();
@@ -24,7 +23,7 @@ void TestStripStopState::loop() {
     case BtnId::Mode:
         fsm.transitionTo(stTestStripTime);
         break;
-    case BtnId::StartStop:
+    case BtnId::Start:
         fsm.transitionTo(stTestStripSelectStop);
         break;
     case BtnId::Focus:
@@ -35,15 +34,13 @@ void TestStripStopState::loop() {
 }
 
 void TestStripStopState::exit() {
-    DBG("stTestStripStopStateExit");
+    
 }
 
 // ------------------------------------
 // STATE "TestStripTime"
 // ------------------------------------
 void TestStripTimeState::enter() {
-    DBG("stTestStripTimeStateEnter");
-
     stTestStripReady.reset();
     stTestStripRunning.reset();
 
@@ -58,7 +55,7 @@ void TestStripTimeState::loop() {
     case BtnId::Mode:
         fsm.transitionTo(stSetTime);
         break;
-    case BtnId::StartStop:
+    case BtnId::Start:
         fsm.transitionTo(stTestStripSelectTime);
         break;
     case BtnId::Focus:
@@ -69,15 +66,13 @@ void TestStripTimeState::loop() {
 }
 
 void TestStripTimeState::exit() {
-    DBG("stTestStripTimeStateExit");
+    
 }
 
 // ------------------------------------
 // STATE "TestStripSelectStopState"
 // ------------------------------------
 void TestStripSelectStopState::enter() {
-    DBG("stTestStripSelectStopStateEnter");
-
     lcd.clear();
     lcd.print(F("Time   ||   Step"));
     lcd.setCursor(7, 1);
@@ -112,7 +107,7 @@ void TestStripSelectStopState::loop() {
         stFocus.returnState = this;
         fsm.transitionTo(stFocus);
         break;
-    case BtnId::StartStop:
+    case BtnId::Start:
         stTestStripReady.setData(currBaseTime, currStep);
         fsm.transitionTo(stTestStripReady);
         break;
@@ -144,8 +139,6 @@ void TestStripSelectStopState::updateLcd() {
 }
 
 void TestStripSelectStopState::exit() {
-    DBG("stTestStripSelectStopStateExit");
-
     lcd.noBlink();
 }
 
@@ -154,8 +147,6 @@ void TestStripSelectStopState::exit() {
 // STATE "TestStripSelectTimeState"
 // ------------------------------------
 void TestStripSelectTimeState::enter() {
-    DBG("stTestStripSelectTimeStateEnter");
-
     lcd.clear();
     lcd.print(F("Time   ||   Step"));
     lcd.setCursor(7, 1);
@@ -190,7 +181,7 @@ void TestStripSelectTimeState::loop() {
         stFocus.returnState = this;
         fsm.transitionTo(stFocus);
         break;
-    case BtnId::StartStop:
+    case BtnId::Start:
         stTestStripReady.setData(currBaseTime, currStepTime);
         fsm.transitionTo(stTestStripReady);
         break;
@@ -225,8 +216,6 @@ void TestStripSelectTimeState::updateLcd() {
 }
 
 void TestStripSelectTimeState::exit() {
-    DBG("stTestStripSelectTimeStateExit");
-
     lcd.noBlink();
 }
 
@@ -236,8 +225,6 @@ void TestStripSelectTimeState::exit() {
 // STATE "TestStripReady"
 // ------------------------------------
 void TestStripReadyState::enter() {
-    DBG("stTestStripReadyEnter");
-    
     lcd.clear();
     lcd.print(F("Strip: "));
     
@@ -252,7 +239,7 @@ void TestStripReadyState::enter() {
 
 void TestStripReadyState::loop() {
     switch (getInput()) {
-    case BtnId::StartStop:
+    case BtnId::Start:
         stTestStripRunning.exposureTime = currTime;
         fsm.transitionTo(stTestStripRunning);
         break;
@@ -264,7 +251,7 @@ void TestStripReadyState::loop() {
 }
 
 void TestStripReadyState::exit() {
-    DBG("stTestStripReadyExit");
+    
 }
 
 void TestStripReadyState::setData(Time time, FStop step) {
@@ -306,12 +293,10 @@ void TestStripRunningState::enter() {
     }
 
     dispatcher.subscribe(*this);
-
-    DBG("stTestStripRunningEnter");
 }
 
 void TestStripRunningState::loop() {
-    if (getInput() == BtnId::StartStop)
+    if (getInput() == BtnId::Start)
         fsm.transitionTo(stTestStripReady);
 }
 
@@ -324,7 +309,6 @@ void TestStripRunningState::timerEvent() {
     if (timerCounter < exposureTime) {
         timerCounter++;
         updateLcd();
-        DBG(String("Running: ") + timerCounter.str() + "/" + exposureTime.str());
     }
     else {
         fsm.transitionTo(stTestStripReady);

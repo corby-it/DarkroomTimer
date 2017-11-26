@@ -8,7 +8,7 @@ enum class BtnId : uint8_t {
     Right = PIN_BTN_RIGHT,
     Up = PIN_BTN_UP,
     Down = PIN_BTN_DOWN,
-    StartStop = PIN_BTN_START,
+    Start = PIN_BTN_START,
     Focus = PIN_BTN_FOCUS,
     Mode = PIN_BTN_MODE,
     None = 255,

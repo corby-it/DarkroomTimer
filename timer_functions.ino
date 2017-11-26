@@ -28,9 +28,6 @@ void SplashScreenState::exit() {
 // ------------------------------------
 
 void SetTimeState::enter() {
-    DBG("stSetTimeEnter");
-    DBG(getDigitName(currDigit));
-
     // init lcd
     lcd.clear();
     lcd.print(F("Set Time:"));
@@ -46,25 +43,21 @@ void SetTimeState::loop() {
     switch (input) {
     case BtnId::Left:
         currDigit = currDigit == 3 ? 3 : currDigit + 1;
-        DBG(getDigitName(currDigit));
         break;
     case BtnId::Right:
         currDigit = currDigit == 0 ? 0 : currDigit - 1;
-        DBG(getDigitName(currDigit));
         break;
     case BtnId::Up:
         currTime += currTime.getDigit(currDigit) == 9 ? 0 : getMult(currDigit);
-        DBG(currTime.str());
         break;
     case BtnId::Down:
         currTime -= currTime.getDigit(currDigit) == 0 ? 0 : getMult(currDigit);
-        DBG(currTime.str());
         break;
     case BtnId::Focus:
         stFocus.returnState = this;
         fsm.transitionTo(stFocus);
         break;
-    case BtnId::StartStop:
+    case BtnId::Start:
         stRunning.returnState = this;
         stRunning.exposureTime =    currTime;
         fsm.transitionTo(stRunning);
@@ -92,7 +85,6 @@ void SetTimeState::updateLcd() {
 }
 
 void SetTimeState::exit() {
-    DBG("stSetTimeExit");
     lcd.noBlink();
 }
 
@@ -101,13 +93,9 @@ void SetTimeState::exit() {
 // ------------------------------------
 
 void SetFstopState::enter() {
-    DBG("stSetFstopEnter");
-
     // to avoid a -INF number of stops
     if (stSetTime.currTime == 0)
         stSetTime.currTime++;
-
-    DBG(String(stSetTime.currTime.stops()) + " (" + stSetTime.currTime.str() + ")");
 
     lcd.clear();
     lcd.print(F("Set Stop:"));
@@ -121,27 +109,23 @@ void SetFstopState::loop() {
     switch (input) {
     case BtnId::Left:
         currFstop--;
-        DBG(currFstop.name());
         break;
     case BtnId::Right:
         currFstop++;
-        DBG(currFstop.name());
         break;
     case BtnId::Up: {
         stSetTime.currTime += currFstop;
-        DBG(String(stSetTime.currTime.stops()) + " (" + stSetTime.currTime.str() + ")");
         break;
     }
     case BtnId::Down: {
         stSetTime.currTime -= currFstop;
-        DBG(String(stSetTime.currTime.stops()) + " (" + stSetTime.currTime.str() + ")");
         break;
     }
     case BtnId::Focus:
         stFocus.returnState = this;
         fsm.transitionTo(stFocus);
         break;
-    case BtnId::StartStop:
+    case BtnId::Start:
         stRunning.returnState = this;
         stRunning.exposureTime = stSetTime.currTime;
         fsm.transitionTo(stRunning);
@@ -166,7 +150,7 @@ void SetFstopState::updateLcd()
 }
 
 void SetFstopState::exit() {
-    DBG("stSetFstopExit");
+
 }
 
 
@@ -188,12 +172,10 @@ void RunningState::enter() {
     }
 
     dispatcher.subscribe(*this);
-
-    DBG("stRunningEnter");
 }
 
 void RunningState::loop() {
-    if (getInput() == BtnId::StartStop)
+    if (getInput() == BtnId::Start)
         fsm.transitionTo(*returnState);
 }
 
@@ -206,7 +188,6 @@ void RunningState::timerEvent() {
     if (timerCounter < exposureTime) {
         timerCounter++;
         updateLcd();
-        DBG(String("Running: ") + timerCounter.str() + "/" + exposureTime.str());
     }
     else {
         fsm.transitionTo(*returnState);
@@ -222,7 +203,6 @@ void RunningState::exit() {
         playOffTone();
 
     timerCounter = 0;
-    DBG("stRunningExit");
 }
 
 
@@ -231,7 +211,6 @@ void RunningState::exit() {
 // ------------------------------------
 
 void FocusState::enter() {
-    DBG("stFocusEnter");
     digitalWrite(PIN_LED, LAMP_ON);
 
     lcd.clear();
@@ -245,6 +224,5 @@ void FocusState::loop() {
 }
 
 void FocusState::exit() {
-    DBG("stFocusExit");
     digitalWrite(PIN_LED, LAMP_OFF);
 }
