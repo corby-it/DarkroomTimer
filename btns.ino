@@ -8,7 +8,7 @@ Button btnStart = Button(PIN_BTN_START, PULLUP);
 Button btnFocus = Button(PIN_BTN_FOCUS, PULLUP);
 Button btnMode = Button(PIN_BTN_MODE, PULLUP);
 
-static const uint32_t debounceInterval = 100;  // milliseconds
+static const uint32_t debounceInterval = 200;  // milliseconds
 
 static uint32_t btnLeftLastPress = 0;
 static uint32_t btnRightLastPress = 0;
